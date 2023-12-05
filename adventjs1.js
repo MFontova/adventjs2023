@@ -21,13 +21,9 @@ function findFirstRepeated(gifts) {
     slicedArray = gifts.slice(i)
     var elementoABuscar = gifts[i - 1]
 
-    // console.log('elemento a buscar', elementoABuscar)
-
     var index = slicedArray.indexOf(elementoABuscar) === -1
       ? slicedArray.indexOf(elementoABuscar)
       : slicedArray.indexOf(elementoABuscar) + i
-
-    // console.log('index', index)
 
     if (index === -1) {
       continue
