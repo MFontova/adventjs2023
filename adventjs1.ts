@@ -14,22 +14,15 @@ const giftIds4 = [1, 3, 4, 5, 0, 1, 3, 0, 7]
 const firstRepeatedId4 = findFirstRepeated(giftIds4)
 console.log(firstRepeatedId4) // 5
 
-function findFirstRepeated(gifts) {
-  var position = gifts.length
+function findFirstRepeated(gifts: Array<number>){
+  let giftsArray: Array<number> = []
 
-  for (let i = 1; i < gifts.length; i++) {
-    slicedArray = gifts.slice(i)
-    var elementoABuscar = gifts[i - 1]
-
-    var index = slicedArray.indexOf(elementoABuscar) === -1
-      ? slicedArray.indexOf(elementoABuscar)
-      : slicedArray.indexOf(elementoABuscar) + i
-
-    if (index === -1) {
-      continue
-    } else if (index < position) {
-      position = index
+  for (const gift of gifts) {
+    if(giftsArray.includes(gift)) {
+      return gift
+    } else if(!giftsArray.includes(gift)) {
+      giftsArray.push(gift)
     }
   }
-  return gifts.length == position ? -1 : gifts[position]
+  return -1
 }
