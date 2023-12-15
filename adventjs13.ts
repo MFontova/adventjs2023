@@ -1,5 +1,5 @@
 console.log(calculateTime(['00:10:00', '01:00:00', '03:30:00']))
-// '-02:20:00'
+// // '-02:20:00'
 
 console.log(calculateTime(['02:00:00', '05:00:00', '00:30:00']))
 // '00:30:00'
@@ -15,47 +15,49 @@ console.log(calculateTime(['00:45:00', '00:45:00', '00:00:30', '00:00:30']))
 
 console.log(calculateTime(['02:00:00', '03:00:00', '02:00:00']))
 
-function calculateTime(deliveries: Array<string>) {
-  let totalTime = { 'hours': 7, 'minutes': 0, 'seconds': 0 }
-  let positive = false
-  let maxSeconds = 7 * 3600
-  let spendSeconds = 0
-
+function calculateTime(deliveries: Array<String>) {
+  let totalSeconds: number = 0
+  let positive: boolean = false
   for (const delivery of deliveries) {
-    let deliveryArray = delivery.split(':').map(i => parseInt(i))
-    if (totalTime['seconds'] < deliveryArray[2]) {
-      totalTime['seconds'] = 60 + totalTime['seconds'] - deliveryArray[2]
-      totalTime['minutes'] -= 1
-    } else if (totalTime['seconds'] > deliveryArray[2]) {
-      totalTime['seconds'] -= deliveryArray[2]
+    const deliveryArray = delivery.split(':').map(e => Number(e))
+    for (let i = 0; i < deliveryArray.length; i++) {
+      switch (i) {
+        case 0:
+          totalSeconds += deliveryArray[0] * 3600
+          break
+
+        case 1:
+          totalSeconds += deliveryArray[1] * 60
+          break
+
+        case 2:
+          totalSeconds += deliveryArray[2]
+          break
+      }
     }
-
-    if (totalTime['minutes'] < deliveryArray[1]) {
-      totalTime['minutes'] = 60 + totalTime['minutes'] - deliveryArray[1]
-      totalTime['hours'] === 0 ? totalTime['hours'] = 0 : totalTime['hours'] -= 1
-    } else if (totalTime['minutes'] > deliveryArray[1]) {
-      totalTime['minutes'] -= deliveryArray[1]
-    }
-
-    if (totalTime['hours'] > deliveryArray[0]) {
-      totalTime['hours'] -= deliveryArray[0]
-      positive = false
-    } else if (totalTime['hours'] <= deliveryArray[0]) {
-      totalTime['hours'] = totalTime['hours'] - deliveryArray[0]
-      positive = true
-    }
-
-    spendSeconds += totalTime.hours * 3600 + totalTime.minutes * 60 + totalTime.seconds
-
   }
-  console.log(maxSeconds, spendSeconds)
 
-  positive = spendSeconds <= maxSeconds
+  if (totalSeconds < 25200) {
+    positive = false
+  } else {
+    positive = true
+  }
 
-  let hours = totalTime.hours.toString().padStart(2, '0')
-  hours = positive ? hours : '-' + hours
-  let minutes = totalTime.minutes.toString().padStart(2, '0')
-  let seconds = totalTime.seconds.toString().padStart(2, '0')
+  let restTime = Math.abs(totalSeconds - 25200)
 
-  return `${hours}:${minutes}:${seconds}`
+  const hours = Math.floor(restTime / 3600)
+
+  const minutes = Math.floor(((restTime / 3600) - hours) * 60)
+
+  const seconds = Math.round((((restTime / 3600) - hours) * 60 - minutes) * 60)
+
+  let hoursString = hours.toString().padStart(2, '0')
+  let minutesString = minutes.toString().padStart(2, '0')
+  let secondsString = seconds.toString().padStart(2, '0')
+
+  if (!positive) {
+    hoursString = '-' + hoursString
+  }
+
+  return `${hoursString}:${minutesString}:${secondsString}`
 }
